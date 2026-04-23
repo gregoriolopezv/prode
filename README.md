@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prode 2026 - World Cup Prediction Game
 
-## Getting Started
+A private prediction game ("prode") for the 2026 FIFA World Cup. Friends compete by predicting match results in invite-only leagues.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Convex** (backend, database, real-time queries)
+- **Clerk** (authentication)
+- **TailwindCSS v4** + **shadcn/ui**
+- **Zod** (runtime validation)
+
+---
+
+## Quick links
+
+- [**🚀 Local setup** → `docs/SETUP.md`](docs/SETUP.md)
+- [**🌐 Production deploy** → `docs/DEPLOY.md`](docs/DEPLOY.md)
+- [**🏗️ Architecture** → `docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+---
+
+## Features
+
+- Sign up / Sign in via Clerk
+- Create and join private leagues via invite code
+- View all 48 group-stage World Cup 2026 matches
+- Submit predictions (home/away scores) before kickoff
+- Admin match lifecycle: **Start** → **Update Score** → **Add Events** → **Finish**
+- Automatic scoring when match is finished
+- League-based rankings with points leaderboard
+- Privacy: others' predictions are hidden until match begins
+- Live match events timeline (goals, cards, substitutions)
+- Full bilingual support: English & Español
+- Full mobile responsiveness
+
+## Scoring System
+
+| Result | Points |
+|--------|--------|
+| Exact score | +3 |
+| Correct winner/draw | +1 |
+| Wrong result | 0 |
+
+---
+
+## Project Structure
+
+```
+prode/
+├── convex/                     # Backend (Convex)
+│   ├── schema.ts               # Database schema (matches, predictions, matchEvents...)
+│   ├── auth.config.ts          # Clerk JWT configuration
+│   ├── lib/
+│   │   ├── errors.ts           # Custom error classes (ForbiddenError, NotFoundError...)
+│   │   ├── scoring.ts          # Pure scoring logic (calculatePoints)
+│   │   ├── time.ts             # UTC time helpers (isMatchOpen)
+│   │   └── validation.ts       # Zod/Convex validators
+│   ├── users.ts                # User sync, me, setAdmin, setLocale
+│   ├── leagues.ts              # League CRUD + join by invite code
+│   ├── matches.ts              # Match queries + lifecycle mutations (start/updateScore/addEvent/finish)
+│   ├── predictions.ts          # Prediction CRUD + privacy-enforced listForMatch
+│   ├── scoring.ts              # Recalculate backfill mutation
+│   └── seed.ts                 # WC2026 fixture seeder (48 matches)
+├── src/
+│   ├── app/
+│   │   ├── page.tsx              # Landing page (bilingual)
+│   │   ├── layout.tsx            # Root layout: ClerkProvider + fonts
+│   │   ├── globals.css           # Tailwind v4 theme (bare @theme block)
+│   │   ├── middleware.ts         # Route protection for /dashboard/* and /admin
+│   │   ├── (auth)/
+│   │   │   ├── sign-in/[[...rest]]/page.tsx
+│   │   │   └── sign-up/[[...rest]]/page.tsx
+│   │   ├── dashboard/
+│   │   │   ├── layout.tsx        # Dashboard shell with nav + language switcher
+│   │   │   ├── leagues/page.tsx      # Join/create leagues (Drawer UI)
+│   │   │   ├── leagues/[id]/page.tsx   # League detail + invite code
+│   │   │   ├── leagues/[id]/ranking/page.tsx
+│   │   │   ├── matches/page.tsx        # Group-filtered match list
+│   │   │   ├── matches/[id]/page.tsx   # Match detail (score, events, predictions)
+│   │   │   └── rankings/page.tsx       # Global rankings view
+│   │   └── admin/page.tsx            # Three-section admin (Scheduled/Live/Finished)
+│   ├── components/
+│   │   ├── ui/                     # shadcn/ui components
+│   │   ├── match-card.tsx          # Reusable card with LIVE badge
+│   │   ├── language-switcher.tsx   # Globe dropdown EN/ES
+│   │   └── ConvexClientProvider.tsx  # Clerk+Convex+LanguageProvider wrapper
+│   ├── lib/
+│   │   ├── utils.ts                # cn() helper
+│   │   └── i18n/
+│   │       ├── types.ts            # Dictionary interface
+│   │       ├── en.ts               # English dictionary
+│   │       ├── es.ts               # Spanish dictionary
+│   │       └── language-provider.tsx # Locale context + t() + Convex sync
+│   └── hooks/
+│       └── use-auth-sync.ts        # Clerk → Convex user sync
+├── docs/
+│   ├── SETUP.md                # Step-by-step local dev guide
+│   ├── DEPLOY.md               # Vercel + Convex production deployment
+│   └── ARCHITECTURE.md         # Data model, privacy, scoring, lifecycle
+├── .env.example                # Environment variable template
+├── next.config.ts
+├── tsconfig.json
+└── components.json               # shadcn/ui config
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting Started (TL;DR)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 1. Install
+git clone <repo-url>
+cd prode
+npm install
 
-## Learn More
+# 2. Configure environment
+cp .env.example .env.local
+# Fill in Clerk keys & Frontend API URL
 
-To learn more about Next.js, take a look at the following resources:
+# 3. Start Convex (leave running)
+npx convex dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 4. Seed matches
+npx convex run seed:run '{"secret":"prode-seed-2026"}'
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 5. Start Next.js
+npx next dev
+```
 
-## Deploy on Vercel
+For full details (Clerk JWT template, admin setup, troubleshooting) see [**docs/SETUP.md**](docs/SETUP.md).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Admin Setup
+
+1. Sign up as a user
+2. Find your `clerkId` in the Clerk Dashboard
+3. Run:
+
+```bash
+npx convex run users:setAdmin '{"clerkId":"your_clerk_id"}'
+```
+
+4. Visit `/admin`
+
+Admin actions:
+- **Start Match**: transitions from `scheduled` → `live`
+- **Update Score**: changes live score in real time
+- **Add Event**: logs match events (goals, cards, subs)
+- **Finish Match**: sets final score, triggers automated scoring
+
+---
+
+## Architecture Decisions
+
+| Decision | Why |
+|----------|-----|
+| **Per-league predictions** | Users can predict the same match differently in each league. Predictions are scoped by `(userId, matchId, leagueId)`. |
+| **UTC timestamps** | All match times stored as epoch ms. Server-side lock checks use `Date.now()`. Client converts to local time for display. |
+| **Denormalized leaderboard** | `leagueMembers.totalPoints` is updated incrementally during scoring. Fast leaderboard query, no aggregation needed. |
+| **Idempotent scoring** | Calculates a `diff` between old and new points on every finish. Re-running is safe and correct. |
+| **Privacy at backend** | `predictions.listForMatch` filters based on `match.status !== "scheduled"`. Never trust the UI alone. |
+| **No i18n middleware** | Custom lightweight dictionary with React Context. Avoids `next-intl` middleware complexity and preserved route simplicity. |
+| **Tailwind v4 bare @theme** | `@theme { ... }` (no `inline` keyword) correctly resolves CSS variables in v4. |
+
+For the full architecture breakdown see [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md).
+
+---
+
+## License
+
+MIT
