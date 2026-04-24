@@ -1,4 +1,4 @@
-import { getTeamEmoji } from "@/lib/flags";
+import { getTeamFlagCode } from "@/lib/flags";
 
 interface TeamFlagProps {
   team: string;
@@ -6,7 +6,12 @@ interface TeamFlagProps {
 }
 
 export default function TeamFlag({ team, className }: TeamFlagProps) {
-  const emoji = getTeamEmoji(team);
-  if (!emoji) return null;
-  return <span className={`text-3xl leading-none ${className ?? ''}`} aria-label={`${team} flag`}>{emoji}</span>;
+  const code = getTeamFlagCode(team);
+  return (
+    <img
+      src={`https://flagcdn.com/${code}.svg`}
+      alt={team}
+      className={className ?? "size-5 rounded-full object-cover"}
+    />
+  );
 }
