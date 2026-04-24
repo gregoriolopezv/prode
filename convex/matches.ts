@@ -160,12 +160,46 @@ export const finish = mutation({
     });
 
     // ── Run scoring ──
+
+    // 1. Existing predictions for this match
     const predictions = await ctx.db
       .query("predictions")
       .withIndex("by_match", (q) => q.eq("matchId", args.matchId))
       .collect();
 
-    for (const p of predictions) {
+    // 2. Build a set of (leagueId:userId) that already have predictions
+    const predictionKey = (lId: string, uId: string) => `${lId}:${uId}`;
+    const existingKeys = new Set(predictions.map((p) => predictionKey(p.leagueId, p.userId)));
+
+    // 3. Find league members missing predictions and create them from defaults
+    const allMembers = await ctx.db.query("leagueMembers").collect();
+    for (const m of allMembers) {
+      if (existingKeys.has(predictionKey(m.leagueId, m.userId))) continue;
+
+      const user = await ctx.db.get(m.userId);
+      const defaultP = user?.defaultPrediction ?? { homeScore: 0, awayScore: 0 };
+
+      await ctx.db.insert("predictions", {
+        userId: m.userId,
+        matchId: args.matchId,
+        leagueId: m.leagueId,
+        homeScore: defaultP.homeScore,
+        awayScore: defaultP.awayScore,
+        pointsEarned: undefined,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    // 4. Re-fetch all predictions (original + newly inserted)
+    const allPredictions = await ctx.db
+      .query("predictions")
+      .withIndex("by_match", (q) => q.eq("matchId", args.matchId))
+      .collect();
+
+    let updatedCount = 0;
+
+    for (const p of allPredictions) {
       const pts = calculatePoints(
         { homeScore: p.homeScore, awayScore: p.awayScore },
         { homeScore: args.homeScore, awayScore: args.awayScore }
@@ -190,8 +224,9 @@ export const finish = mutation({
           });
         }
       }
+      updatedCount++;
     }
 
-    return { updated: predictions.length };
+    return { updated: updatedCount };
   },
 });

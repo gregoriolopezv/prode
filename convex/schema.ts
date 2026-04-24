@@ -9,6 +9,12 @@ export default defineSchema({
     imageUrl: v.optional(v.string()),
     role: v.optional(v.string()), // "admin" | undefined
     locale: v.optional(v.string()), // "en" | "es"
+    defaultPrediction: v.optional(
+      v.object({
+        homeScore: v.number(),
+        awayScore: v.number(),
+      })
+    ),
     createdAt: v.number(),
   })
     .index("by_clerkId", ["clerkId"])

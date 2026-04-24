@@ -5,11 +5,9 @@ import { usePathname } from "next/navigation";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { useAuthSync } from "@/hooks/use-auth-sync";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { TimezoneLabel } from "@/components/timezone-label";
 import { useLanguage } from "@/lib/i18n/language-provider";
-import { Trophy, Calendar, Users } from "lucide-react";
+import { Trophy, Calendar, Users, Settings } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -25,6 +23,7 @@ export default function DashboardLayout({
     { href: "/dashboard/leagues", label: t("nav.leagues"), icon: Users },
     { href: "/dashboard/matches", label: t("nav.matches"), icon: Calendar },
     { href: "/dashboard/rankings", label: t("nav.rankings"), icon: Trophy },
+    { href: "/dashboard/settings", label: t("nav.settings"), icon: Settings },
   ];
 
   return (
@@ -50,8 +49,6 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          <LanguageSwitcher />
-          <ThemeSwitcher />
           <TimezoneLabel />
           <UserButton />
         </div>

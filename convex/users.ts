@@ -23,6 +23,8 @@ export const sync = mutation({
         email: args.email,
         name: args.name ?? existing.name,
         imageUrl: args.imageUrl ?? existing.imageUrl,
+        // initialize defaultPrediction if missing
+        defaultPrediction: existing.defaultPrediction ?? { homeScore: 0, awayScore: 0 },
       });
       return existing._id;
     }
@@ -33,6 +35,7 @@ export const sync = mutation({
       name: args.name,
       imageUrl: args.imageUrl,
       locale: "en",
+      defaultPrediction: { homeScore: 0, awayScore: 0 },
       createdAt: now,
     });
   },
@@ -93,6 +96,32 @@ export const setLocale = mutation({
     if (!user) throw new NotFoundError("User");
 
     await ctx.db.patch(user._id, { locale });
+    return user._id;
+  },
+});
+
+export const updateDefaultPrediction = mutation({
+  args: {
+    homeScore: v.number(),
+    awayScore: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) throw new NotFoundError("User");
+
+    await ctx.db.patch(user._id, {
+      defaultPrediction: {
+        homeScore: args.homeScore,
+        awayScore: args.awayScore,
+      },
+    });
     return user._id;
   },
 });

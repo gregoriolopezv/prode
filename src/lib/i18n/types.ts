@@ -3,6 +3,7 @@ export interface Dictionary {
     leagues: string;
     matches: string;
     rankings: string;
+    settings: string;
     admin: string;
     adminDashboard: string;
     adminMatches: string;
@@ -146,5 +147,19 @@ export interface Dictionary {
     tokyonight: string;
     vercel: string;
     dracula: string;
+  };
+  settings: {
+    title: string;
+    general: string;
+    language: string;
+    theme: string;
+    defaultPrediction: string;
+    defaultPredictionDesc: string;
+    save: string;
+    saved: string;
+    saving: string;
+    userSettings: string;
+    darkMode: string;
+    lightMode: string;
   };
 }

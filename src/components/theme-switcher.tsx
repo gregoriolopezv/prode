@@ -11,11 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/lib/i18n/language-provider";
 import { THEMES, type ThemeId } from "@/lib/themes";
-import { Sun, Moon, Palette } from "lucide-react";
+import { Sun, Moon, Palette, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
-export function ThemeSwitcher() {
+interface Props {
+  variant?: "compact" | "full";
+}
+
+export function ThemeSwitcher({ variant = "compact" }: Props) {
   const { theme, setTheme } = useTheme();
   const { selectedTheme, setThemeId } = usePalette();
   const { t } = useLanguage();
@@ -24,13 +28,73 @@ export function ThemeSwitcher() {
 
   const isDark = mounted && theme === "dark";
 
+  const currentThemeLabel = t(`themes.${selectedTheme}` as const);
+
+  const toggleMode = () => setTheme(isDark ? "light" : "dark");
+
+  if (variant === "full") {
+    return (
+      <div className="flex items-center gap-2">
+        {/* Light / dark toggle (text label) */}
+        <Button variant="outline" size="sm" onClick={toggleMode} className="gap-1.5">
+          {!mounted ? (
+            <>
+              <Sun className="h-4 w-4" />
+              <span>{t("settings.lightMode")}</span>
+            </>
+          ) : isDark ? (
+            <>
+              <Moon className="h-4 w-4" />
+              <span>{t("settings.darkMode")}</span>
+            </>
+          ) : (
+            <>
+              <Sun className="h-4 w-4" />
+              <span>{t("settings.lightMode")}</span>
+            </>
+          )}
+        </Button>
+
+        {/* Theme palette dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Palette className="h-4 w-4" />
+              <span>{currentThemeLabel}</span>
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="min-w-[10rem]">
+            {THEMES.map((themeMeta) => (
+              <DropdownMenuItem
+                key={themeMeta.id}
+                onClick={() => setThemeId(themeMeta.id)}
+                className={cn(
+                  "flex items-center gap-2 cursor-pointer",
+                  selectedTheme === themeMeta.id && "font-semibold"
+                )}
+              >
+                <span
+                  className="inline-block w-3 h-3 rounded-full border border-border/60 flex-shrink-0"
+                  style={{ backgroundColor: themeMeta.swatch }}
+                />
+                {t(`themes.${themeMeta.id}` as const)}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  }
+
+  // compact (header) variant
   return (
     <div className="flex items-center gap-1">
-      {/* ── Mode toggle ────────────────────────────── */}
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
+        onClick={toggleMode}
         aria-label="Toggle theme"
         className="relative"
       >
@@ -54,7 +118,6 @@ export function ThemeSwitcher() {
         )}
       </Button>
 
-      {/* ── Palette selector ───────────────────────── */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" aria-label="Select theme">
