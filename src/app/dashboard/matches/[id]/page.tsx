@@ -14,6 +14,7 @@ import { ArrowLeft, Lock, Globe, Activity } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import { Id } from "@convex/_generated/dataModel";
 import { useLanguage } from "@/lib/i18n/language-provider";
+import TeamFlag from "@/components/team-flag";
 import { cn } from "@/lib/utils";
 
 export default function MatchDetailPage() {
@@ -144,9 +145,15 @@ export default function MatchDetailPage() {
               {dateStr} {t("matches.at")} {timeStr} {t("matches.utc")}
             </p>
             <div className="flex items-center justify-between text-2xl sm:text-3xl font-bold">
-              <div className="flex-1 text-right">{match.homeTeam}</div>
+              <div className="flex-1 text-right flex items-center justify-end gap-2">
+                <span>{match.homeTeam}</span>
+                <TeamFlag team={match.homeTeam} />
+              </div>
               <div className="px-4 sm:px-8 text-lg text-muted-foreground">vs</div>
-              <div className="flex-1 text-left">{match.awayTeam}</div>
+              <div className="flex-1 text-left flex items-center gap-2">
+                <TeamFlag team={match.awayTeam} />
+                <span>{match.awayTeam}</span>
+              </div>
             </div>
 
             {/* Live / Finished score */}
@@ -194,7 +201,8 @@ export default function MatchDetailPage() {
                     <span className="font-mono font-bold text-muted-foreground w-10">{ev.minute}&apos;</span>
                     <EventIcon type={ev.type} />
                     <span className="flex-1">{ev.description}</span>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs flex items-center gap-0.5">
+                      <TeamFlag team={ev.team === "home" ? match.homeTeam : match.awayTeam} />
                       {ev.team === "home" ? match.homeTeam : match.awayTeam}
                     </Badge>
                   </div>
@@ -232,10 +240,12 @@ export default function MatchDetailPage() {
               ownPrediction ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                    <span className="font-medium">
+                    <span className="font-medium flex items-center gap-1.5">
+                      <TeamFlag team={match.homeTeam} />
                       {match.homeTeam}: {ownPrediction.homeScore}
                     </span>
-                    <span className="font-medium">
+                    <span className="font-medium flex items-center gap-1.5">
+                      <TeamFlag team={match.awayTeam} />
                       {match.awayTeam}: {ownPrediction.awayScore}
                     </span>
                     {ownPrediction.pointsEarned !== undefined && (
@@ -251,7 +261,9 @@ export default function MatchDetailPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex items-end gap-4">
                   <div className="flex-1 space-y-2">
-                    <Label>{match.homeTeam}</Label>
+                    <Label className="flex items-center gap-1.5">
+                      {match.homeTeam}
+                    </Label>
                     <Input
                       type="number"
                       min={0}
@@ -262,7 +274,9 @@ export default function MatchDetailPage() {
                   </div>
                   <div className="pb-2 text-muted-foreground font-medium">-</div>
                   <div className="flex-1 space-y-2">
-                    <Label>{match.awayTeam}</Label>
+                    <Label className="flex items-center gap-1.5">
+                      {match.awayTeam}
+                    </Label>
                     <Input
                       type="number"
                       min={0}

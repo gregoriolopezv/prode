@@ -6,6 +6,7 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 import { useAuthSync } from "@/hooks/use-auth-sync";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { TimezoneLabel } from "@/components/timezone-label";
 import { useLanguage } from "@/lib/i18n/language-provider";
 import { Trophy, Calendar, Users } from "lucide-react";
 
@@ -49,6 +50,7 @@ export default function DashboardLayout({
           </nav>
 
           <LanguageSwitcher />
+          <TimezoneLabel />
           <UserButton />
         </div>
       </header>

@@ -1,3 +1,4 @@
+import TeamFlag from "@/components/team-flag";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Trophy } from "lucide-react";
@@ -59,20 +60,28 @@ export default function MatchCard({ match, prediction }: MatchCardProps) {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex-1 text-left">
-            <div className="font-semibold">{match.homeTeam}</div>
+        <div className="flex items-center gap-3">
+          {/* Home team */}
+          <div className="flex-1">
+            <div className="flex items-center gap-2 font-semibold">
+              <TeamFlag team={match.homeTeam} />
+              <span>{match.homeTeam}</span>
+            </div>
             {showScore && match.homeScore !== undefined && (
-              <div className="text-lg font-bold">{match.homeScore}</div>
+              <div className="text-lg font-bold mt-0.5">{match.homeScore}</div>
             )}
           </div>
 
-          <div className="px-3 text-sm text-muted-foreground font-medium">vs</div>
+          <div className="text-sm text-muted-foreground font-medium">vs</div>
 
+          {/* Away team */}
           <div className="flex-1 text-right">
-            <div className="font-semibold">{match.awayTeam}</div>
+            <div className="flex items-center gap-2 font-semibold justify-end">
+              <span>{match.awayTeam}</span>
+              <TeamFlag team={match.awayTeam} />
+            </div>
             {showScore && match.awayScore !== undefined && (
-              <div className="text-lg font-bold">{match.awayScore}</div>
+              <div className="text-lg font-bold mt-0.5">{match.awayScore}</div>
             )}
           </div>
         </div>
