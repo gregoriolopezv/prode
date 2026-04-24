@@ -6,6 +6,7 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 import { useAuthSync } from "@/hooks/use-auth-sync";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { TimezoneLabel } from "@/components/timezone-label";
 import { useLanguage } from "@/lib/i18n/language-provider";
 import { Trophy, LayoutDashboard, Calendar } from "lucide-react";
@@ -55,6 +56,7 @@ export default function AdminLayout({
           </Link>
 
           <LanguageSwitcher />
+          <ThemeSwitcher />
           <TimezoneLabel />
           <UserButton />
         </div>

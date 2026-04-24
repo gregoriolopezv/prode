@@ -140,4 +140,11 @@ export interface Dictionary {
     en: string;
     es: string;
   };
+  themes: {
+    default: string;
+    solarized: string;
+    tokyonight: string;
+    vercel: string;
+    dracula: string;
+  };
 }

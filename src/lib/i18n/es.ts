@@ -146,4 +146,11 @@ export const es: Dictionary = {
     en: "English",
     es: "Español",
   },
+  themes: {
+    default: "Predeterminado",
+    solarized: "Solarized",
+    tokyonight: "TokyoNight",
+    vercel: "Vercel",
+    dracula: "Dracula",
+  },
 };
