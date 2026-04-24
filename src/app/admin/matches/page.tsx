@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Trophy, Activity } from "lucide-react";
 import MatchCard from "@/components/match-card";
 import { useLanguage } from "@/lib/i18n/language-provider";
@@ -250,27 +257,29 @@ export default function AdminMatchesPage() {
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t("admin.eventType")}</Label>
-                    <select
-                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-                      value={eventType}
-                      onChange={(e) => setEventType(e.target.value as any)}
-                    >
-                      <option value="goal">Goal</option>
-                      <option value="yellow-card">Yellow Card</option>
-                      <option value="red-card">Red Card</option>
-                      <option value="sub">Substitution</option>
-                    </select>
+                    <Select value={eventType} onValueChange={(v) => setEventType(v as typeof eventType)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="goal">Goal</SelectItem>
+                        <SelectItem value="yellow-card">Yellow Card</SelectItem>
+                        <SelectItem value="red-card">Red Card</SelectItem>
+                        <SelectItem value="sub">Substitution</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t("admin.eventType")}</Label>
-                    <select
-                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-                      value={eventTeam}
-                      onChange={(e) => setEventTeam(e.target.value as any)}
-                    >
-                      <option value="home">{t("admin.teamHome")}</option>
-                      <option value="away">{t("admin.teamAway")}</option>
-                    </select>
+                    <Select value={eventTeam} onValueChange={(v) => setEventTeam(v as typeof eventTeam)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="home">{t("admin.teamHome")}</SelectItem>
+                        <SelectItem value="away">{t("admin.teamAway")}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t("admin.eventDescription")}</Label>

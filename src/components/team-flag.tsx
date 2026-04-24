@@ -11,7 +11,7 @@ export default function TeamFlag({ team, className }: TeamFlagProps) {
     <img
       src={`https://flagcdn.com/${code}.svg`}
       alt={team}
-      className={className ?? "size-5 rounded-full object-cover"}
+      className={className ?? "size-10 rounded-sm object-cover"}
     />
   );
 }
