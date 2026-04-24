@@ -26,13 +26,12 @@ export default function MatchesPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">{t("matches.title")}</h1>
-
       <Tabs
         value={selectedGroup}
         onValueChange={setSelectedGroup}
         className="w-full"
       >
-        <TabsList className="flex flex-wrap h-auto">
+        <TabsList className="flex flex-wrap">
           <TabsTrigger value="ALL">{t("matches.groupAll")}</TabsTrigger>
           {groups?.map((g) => (
             <TabsTrigger key={g} value={g}>
@@ -40,15 +39,14 @@ export default function MatchesPage() {
             </TabsTrigger>
           ))}
         </TabsList>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 content-start md:ml-4">
+          {sortedMatches.map((match: Doc<"matches">) => (
+            <Link key={match._id} href={`/dashboard/matches/${match._id}`}>
+              <MatchCard match={match} />
+            </Link>
+          ))}
+        </div>
       </Tabs>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sortedMatches.map((match: Doc<"matches">) => (
-          <Link key={match._id} href={`/dashboard/matches/${match._id}`}>
-            <MatchCard match={match} />
-          </Link>
-        ))}
-      </div>
     </div>
   );
 }

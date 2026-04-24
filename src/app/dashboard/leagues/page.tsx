@@ -80,7 +80,7 @@ export default function LeaguesPage() {
         {/* ── Create League Drawer ── */}
         <Drawer open={createOpen} onOpenChange={setCreateOpen}>
           <DrawerTrigger asChild>
-            <Button variant="default" size="sm">
+            <Button variant="default">
               <Plus data-icon="inline-start" />
               {t("leagues.createTitle")}
             </Button>
@@ -126,7 +126,7 @@ export default function LeaguesPage() {
         {/* ── Join League Drawer ── */}
         <Drawer open={joinOpen} onOpenChange={setJoinOpen}>
           <DrawerTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline">
               <Search data-icon="inline-start" />
               {t("leagues.joinTitle")}
             </Button>

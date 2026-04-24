@@ -39,7 +39,7 @@ export default function MatchCard({ match, prediction }: MatchCardProps) {
   const showScore = isLive || isFinished;
 
   return (
-    <Card className={cn("hover:bg-muted/50 transition-colors", isLive ? "ring-1 ring-red-500/30" : "")}>
+    <Card className={cn("hover:bg-muted/50 transition-colors h-full", isLive ? "ring-1 ring-red-500/30" : "")}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <Badge variant="outline">Group {match.group}</Badge>
